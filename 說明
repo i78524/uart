@@ -1,0 +1,53 @@
+(0). 作者：陳繹文 YiWen Chen (i78524@gmail.com)
+     日期：2020/07/28
+
+
+
+(1). 本程式為uart收發實作
+
+
+
+(2). 編譯指令
+gcc main.c baseUart.c -o helloUart -lpthread
+
+
+
+(3). 可以用以下範例來不斷進行uart發送測試
+
+  int pret;
+  pthread_t thread_Test;
+  if ((pret = pthread_create(&thread_Test, NULL, &recUART_Test, NULL)) != 0) {
+      printf("thread_Test thread creation failed!");
+  }
+  pthread_detach(thread_Test);    
+
+
+
+(4). 以下是fifo example ，當作筆記留下來
+
+
+  //************* Write FIFO init start ***********
+  #define FIFO_uart_NAME                "/tmp/uart_fifo_handle"
+  int wFifoFd;
+  int wFifoLen;
+  if (access(FIFO_uart_NAME, F_OK) == -1) {
+      if (mkfifo(FIFO_uart_NAME, 0777) != 0) {
+          SATERRMSG("Could not create fifo %s", FIFO_TALKSTREAM_NAME);
+          return 0;
+      }
+  }
+  if ((wFifoFd = open(FIFO_uart_NAME, O_WRONLY)) == -1) {
+      SATERRMSG("Open FIFO_uart_NAME fifo failed");
+      return 0;
+  }
+  //************* Create udp server start ***********
+  char* inputChar = "ABCDEFGHIJK";
+  
+  while(1) {
+      wFifoLen = write(wFifoFd, inputChar, strlen(inputChar) );   
+      printf("[write wFifoFd] wFifoLen=%d", wFifoLen);
+      sleep(1);
+  }
+
+
+本文結束
